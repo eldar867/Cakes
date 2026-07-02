@@ -66,3 +66,73 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+import getDbClient from './db.js';
+
+ipcMain.handle('get-products', async () => {
+  try {
+    const client = await getDbClient();
+    const result = await client.query('SELECT * FROM products ORDER BY id');
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return [];
+  }
+});
+
+ipcMain.handle('add-product', async (event, product) => {
+  try {
+    const client = await getDbClient();
+    const { article, name, unit, price, brand_id, type_id, category_id, description } = product;
+    const result = await client.query(
+      `INSERT INTO products (article, name, unit, price, brand_id, type_id, category_id, description, is_active, stock_quantity) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true, 0) 
+       RETURNING *`,
+      [article, name, unit, price, brand_id || null, type_id || null, category_id || null, description || '']
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+});
+
+ipcMain.handle('update-product', async (event, id, product) => {
+  try {
+    const client = await getDbClient();
+    const { article, name, unit, price, brand_id, type_id, category_id, description } = product;
+    const result = await client.query(
+      `UPDATE products SET article=$1, name=$2, unit=$3, price=$4, brand_id=$5, type_id=$6, category_id=$7, description=$8 WHERE id=$9 RETURNING *`,
+      [article, name, unit, price, brand_id || null, type_id || null, category_id || null, description || '', id]
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+});
+
+ipcMain.handle('delete-product', async (event, id) => {
+  try {
+    const client = await getDbClient();
+    await client.query('DELETE FROM products WHERE id = $1', [id]);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

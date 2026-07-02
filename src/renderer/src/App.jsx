@@ -1,19 +1,11 @@
-import { useEffect } from 'react'
-import electronLogo from './assets/electron.svg'
+import Products from './components/Products';
 
 function App() {
-  useEffect(() => {
-    (async (data="test") => await window.api.foo(data))()
-  }, [])
-
-
   return (
-    <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <h1>Hello, world!</h1>
-    </>
-  )
+    <div>
+      <Products />
+    </div>
+  );
 }
 
-export default App
-
+export default App;

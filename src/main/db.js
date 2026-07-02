@@ -2,13 +2,34 @@ import { Client } from 'pg';
 
 export default async () => {
   const client = new Client({
-    user: 'postgres',
-    password: 'postgres',
-    host: 'localhost',
-    port: '5432',
-    database: 'demo_2025',
+    connectionString: 'postgresql://postgres.gloidsvitvconfpaxqcj:3238kolya32@aws-0-eu-west-1.pooler.supabase.com:6543/postgres',
+    ssl: false
   });
 
-  await client.connect();
-  return client;
+  try {
+    await client.connect();
+    console.log('Connected!');
+    return client;
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error;
+  }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
